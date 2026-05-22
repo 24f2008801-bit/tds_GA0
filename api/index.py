@@ -6,12 +6,19 @@ import numpy as np
 app = FastAPI()
 
 # Proper CORS setup
-app.add_middleware(
+aapp.add_middleware(
+
     CORSMiddleware,
+
     allow_origins=["*"],
-    allow_credentials=True,
+
+    allow_credentials=False,
+
     allow_methods=["*"],
+
     allow_headers=["*"],
+
+
 )
 
 telemetry = [
