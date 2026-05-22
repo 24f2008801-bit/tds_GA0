@@ -5,7 +5,7 @@ import numpy as np
 
 app = FastAPI()
 
-# Enable CORS
+# Proper CORS setup
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -14,7 +14,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Sample telemetry data
 telemetry = [
     {"region": "emea", "latency_ms": 120, "uptime": 99.9},
     {"region": "emea", "latency_ms": 180, "uptime": 99.5},
@@ -24,12 +23,16 @@ telemetry = [
     {"region": "amer", "latency_ms": 155, "uptime": 99.4},
 ]
 
-class RequestBody(BaseModel):
+class MetricsRequest(BaseModel):
     regions: list[str]
     threshold_ms: int
 
+@app.options("/")
+async def options_handler():
+    return {"ok": True}
+
 @app.post("/")
-async def metrics(data: RequestBody):
+async def get_metrics(data: MetricsRequest):
     result = {}
 
     for region in data.regions:
