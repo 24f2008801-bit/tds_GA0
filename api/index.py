@@ -5,21 +5,17 @@ import numpy as np
 
 app = FastAPI()
 
-# Proper CORS setup
-aapp.add_middleware(
-
+app.add_middleware(
     CORSMiddleware,
-
     allow_origins=["*"],
-
     allow_credentials=False,
-
     allow_methods=["*"],
-
     allow_headers=["*"],
-
-
 )
+
+class RequestBody(BaseModel):
+    regions: list[str]
+    threshold_ms: int
 
 telemetry = [
     {"region": "emea", "latency_ms": 120, "uptime": 99.9},
@@ -30,16 +26,12 @@ telemetry = [
     {"region": "amer", "latency_ms": 155, "uptime": 99.4},
 ]
 
-class MetricsRequest(BaseModel):
-    regions: list[str]
-    threshold_ms: int
-
-@app.options("/")
-async def options_handler():
-    return {"ok": True}
+@app.get("/")
+def home():
+    return {"status": "ok"}
 
 @app.post("/")
-async def get_metrics(data: MetricsRequest):
+def metrics(data: RequestBody):
     result = {}
 
     for region in data.regions:
