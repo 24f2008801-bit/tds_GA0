@@ -5,7 +5,7 @@ import numpy as np
 
 app = FastAPI()
 
-# CORS configuration
+# Enable CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -14,7 +14,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Request schema
+# Request body schema
 class RequestBody(BaseModel):
     regions: list[str]
     threshold_ms: int
@@ -29,18 +29,18 @@ telemetry = [
     {"region": "amer", "latency_ms": 155, "uptime": 99.4},
 ]
 
-# Root GET endpoint
-@app.get("/")
+# Health check
+@app.get("/api/index")
 def home():
     return {"status": "ok"}
 
 # OPTIONS handler for CORS preflight
-@app.options("/")
+@app.options("/api/index")
 async def options_route():
     return {"message": "ok"}
 
-# POST endpoint
-@app.post("/")
+# Main POST endpoint
+@app.post("/api/index")
 def metrics(data: RequestBody):
     result = {}
 
@@ -62,5 +62,5 @@ def metrics(data: RequestBody):
 
     return result
 
-# Required for Vercel
+# Required by Vercel
 handler = app
